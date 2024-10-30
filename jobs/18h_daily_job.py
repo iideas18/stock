@@ -62,31 +62,32 @@ def stat_all(tmp_datetime):
         # print(data.index)
         # 解决ESP 小数问题。
         # data["esp"] = data["esp"].round(2)  # 数据保留2位小数
-        data.columns = ['index', 'code', 'name', 'latest_price', 'quote_change', 'ups_downs', 'volume', 'turnover',
-                        'amplitude', 'high', 'low', 'open', 'closed', 'quantity_ratio', 'turnover_rate', 'pe_dynamic',
-                        'pb']
+        data.columns = ['index', 'code', 'name', 'last_price', 'change_percent', 'change_amount',
+        'volume', 'turnover', 'amplitude', 'high', 'low', 'open', 'closed', 'volume_ratio',
+        'turnover_rate', 'pe_ratio','pb_ratio', 'market_cap','circulating_market_cap','rise_speed',
+        'change_5min', 'change_ercent_60day','ytd_change_percent']
 
         data = data.loc[data["code"].apply(stock_a)].loc[data["name"].apply(stock_a_filter_st)].loc[
-            data["latest_price"].apply(stock_a_filter_price)]
+            data["last_price"].apply(stock_a_filter_price)]
         print(data)
         data['date'] = datetime_int  # 修改时间成为int类型。
 
         # 删除老数据。
-        del_sql = " DELETE FROM `stock_zh_ah_name` where `date` = '%s' " % datetime_int
+        del_sql = " DELETE FROM `stock_zh_a_spot_em` where `date` = '%s' " % datetime_int
         common.insert(del_sql)
 
         data.set_index('code', inplace=True)
         data.drop('index', axis=1, inplace=True)
         print(data)
         # 删除index，然后和原始数据合并。
-        common.insert_db(data, "stock_zh_ah_name", True, "`date`,`code`")
+        common.insert_db(data, "stock_zh_a_spot_em", True, "`date`,`code`")
     except Exception as e:
         print("error :", e)
 
 
 
     # 龙虎榜-个股上榜统计
-    # 接口: stock_sina_lhb_ggtj
+    # 接口: stock_lhb_ggtj_sina
     #
     # 目标地址: http://vip.stock.finance.sina.com.cn/q/go.php/vLHBData/kind/ggtj/index.phtml
     #
@@ -94,25 +95,25 @@ def stat_all(tmp_datetime):
     #
 
     try:
-        stock_sina_lhb_ggtj = ak.stock_sina_lhb_ggtj(recent_day="5")
-        print(stock_sina_lhb_ggtj)
+        stock_lhb_ggtj_sina = ak.stock_lhb_ggtj_sina(recent_day="5")
+        print(stock_lhb_ggtj_sina)
 
-        stock_sina_lhb_ggtj.columns = ['code', 'name', 'ranking_times', 'sum_buy', 'sum_sell', 'net_amount', 'buy_seat',
+        stock_lhb_ggtj_sina.columns = ['code', 'name', 'ranking_times', 'sum_buy', 'sum_sell', 'net_amount', 'buy_seat',
                                        'sell_seat']
 
-        stock_sina_lhb_ggtj = stock_sina_lhb_ggtj.loc[stock_sina_lhb_ggtj["code"].apply(stock_a)].loc[
-            stock_sina_lhb_ggtj["name"].apply(stock_a_filter_st)]
+        stock_lhb_ggtj_sina = stock_lhb_ggtj_sina.loc[stock_lhb_ggtj_sina["code"].apply(stock_a)].loc[
+            stock_lhb_ggtj_sina["name"].apply(stock_a_filter_st)]
 
-        stock_sina_lhb_ggtj.set_index('code', inplace=True)
+        stock_lhb_ggtj_sina.set_index('code', inplace=True)
         # data_sina_lhb.drop('index', axis=1, inplace=True)
         # 删除老数据。
-        stock_sina_lhb_ggtj['date'] = datetime_int  # 修改时间成为int类型。
+        stock_lhb_ggtj_sina['date'] = datetime_int  # 修改时间成为int类型。
 
         # 删除老数据。
-        del_sql = " DELETE FROM `stock_sina_lhb_ggtj` where `date` = '%s' " % datetime_int
+        del_sql = " DELETE FROM `stock_lhb_ggtj_sina` where `date` = '%s' " % datetime_int
         common.insert(del_sql)
 
-        common.insert_db(stock_sina_lhb_ggtj, "stock_sina_lhb_ggtj", True, "`date`,`code`")
+        common.insert_db(stock_lhb_ggtj_sina, "stock_lhb_ggtj_sina", True, "`date`,`code`")
 
     except Exception as e:
         print("error :", e)

@@ -1,14 +1,17 @@
-### 说明，项目迁移到了Gitee 啦，最后一次修改，2023-06-02 执行存档
 
-项目迁移到这里了：此项目后续更新访问这里：
+### github项目2023-06-02 执行存档，gitee是最新的
 
+这个项目地址已经存档，不维护了
+https://github.com/pythonstock/stock
+
+迁移到了gitee地址：
 https://gitee.com/pythonstock/stock
 
-github项目后续就Archives存档了，不再更新了！
+### 项目部署放到docker-compose
 
-csdn的pythonstock专栏地址，相关资料都在这里有说明：
+单独的项目部署脚本维护：
+https://gitee.com/pythonstock/docker-compose
 
-https://blog.csdn.net/freewebsys/category_9285317.html
 
 
 ### pythonstock V2 项目简介
@@ -17,7 +20,7 @@ https://blog.csdn.net/freewebsys/category_9285317.html
 **特别说明：股市有风险投资需谨慎，本项目只能用于Python代码学习，股票分析，投资失败亏钱不负责，不算BUG。**
 
 ```
-项目地址：https://github.com/pythonstock/stock
+
 PythonStock V2 是基于Python的pandas，akshare，bokeh，tornado，stockstats，ta-lib等框架开发的全栈股票系统。
 项目创建于2017年7月17日，每月不定期更新。
 1）可以直接使用docker直接本地部署运行，整个项目在docker hub上压缩后200MB，本地占用500MB磁盘空间。
@@ -32,20 +35,21 @@ PythonStock V2 是基于Python的pandas，akshare，bokeh，tornado，stockstats
 基础库版本
 
 1，pandas使用【 1.3.5 】版本，升级了
-2，numpy使用【 1.21.5 】版本，升级了
-3，akshare使用【 1.3.50 】版本，升级了
+2，numpy使用【 1.21.6 】版本，升级了
+3，akshare使用【 1.10.5 】版本，升级了
 4，bokeh使用【 2.4.2 】版本，升级了
 5，stockstats使用【 0.3.2 】版本
 
 ```
 
+
 2.0 说明
- ![image](https://raw.githubusercontent.com/pythonstock/stock/master/web/static/img/stock2-001.png)
- ![image](https://raw.githubusercontent.com/pythonstock/stock/master/web/static/img/stock2-002.png)
+ ![image](https://gitee.com/pythonstock/stock/raw/master/web/static/img/stock2-001.png)
+ ![image](https://gitee.com/pythonstock/stock/raw/master/web/static/img/stock2-002.png)
 
  bokeh 绘图指标数据：
  
-  ![image](https://raw.githubusercontent.com/pythonstock/stock/master/web/static/img/stock2-003.png)
+  ![image](https://gitee.com/pythonstock/stock/raw/master/web/static/img/stock2-003.png)
  
 
 然后根据3个指标进行股票数据计算：
@@ -92,39 +96,8 @@ CCI
 | 17, VR，MAVR指标     | http://wiki.mbalib.com/wiki/%E6%88%90%E4%BA%A4%E9%87%8F%E6%AF%94%E7%8E%87   成交量比率（Volumn Ratio，VR）（简称VR），是一项通过分析股价上升日成交额（或成交量，下同）与股价下降日成交额比值， 从而掌握市场买卖气势的中期技术指标。 |
 
 
-### 使用方法（依赖docker）
+### 使用方法（依赖docker，docker-compose）
 
-使用 mariadb 和 stock 两个镜像
-
-```
-mkdir -p /data/mariadb/data
-docker pull pythonstock/pythonstock:latest
-docker pull mariadb:latest
-
-docker run --name mariadb -v /data/mariadb/data:/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=mariadb -p 3306:3306 -d mariadb:latest
-
-docker run -itd --link=mariadb --name stock  \
-    -v /data/notebooks:/data/notebooks \
-    -p 8888:8888 \
-    -p 9999:9999 \
-    pythonstock/pythonstock:latest
-
-```
-
-直接启动stock ，使用其他 mysql 数据库，需要配置变量方式：
-
-```
-docker run -itd --name stock  \
-    -v /data/notebooks:/data/notebooks \
-    -p 8888:8888 \
-    -p 9999:9999 \
-    -e MYSQL_HOST=127.0.0.1 \
-    -e MYSQL_USER=root \
-    -e MYSQL_PWD=mariadb \
-    -e MYSQL_DB=stock_data \
-    pythonstock/pythonstock:latest
-```
 
 或者使用docker compose
 
@@ -138,14 +111,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 docker-compose up -d
-```
-
-要想修改文件进行调试，增加当前目录映射，加入到stock里面：
-```yaml
-        volumes:
-            - "./jobs:/data/stock/jobs"
-            - "./libs:/data/stock/libs"
-            - "./web:/data/stock/web"
 ```
 
 进入镜像：
@@ -208,6 +173,22 @@ CREATE DATABASE IF NOT EXISTS `stock_data` CHARACTER SET utf8 COLLATE utf8_gener
 http://docs.sqlalchemy.org/en/latest/core/reflection.html
 
 ## 更新日志
+
+
+### 16 更新发布 2.1 版本进行镜像升级 2023-06-03
+
+使用新方式打包镜像，镜像大小从本地的 852MB 缩小到 597MB。
+为了支持更多 AKShare 特性，请尽快升级 Python 到 3.8 以上版本
+
+1，numpy从【 1.21.5 】升级到了【 1.21.6 】版本
+2，akshare从【 1.3.50 】升级到了【 1.10.5 】版本
+3，bokeh从【 2.4.2 】升级到了【 2.4.3 】版本
+
+根据 https://www.akshare.xyz/changelog.html 
+修改方法：
+
+1.7.99 替换 stock_sina_lhb_ggtj 成：stock_lhb_ggtj_sina
+
 
 ### 15 发布一个 2.0 的版本 - 2021-10-11
 
